@@ -4,11 +4,12 @@ import scrapy
 class MercadolivreSpider(scrapy.Spider):
     name = "mercadolivre"
     start_urls = ["https://lista.mercadolivre.com.br/tenis-corrida-masculino"]
-
-    def parse(self, response):
+    page_count = 1
+    max_page =10
+    
+    def parse(self, response): 
         products = response.css('div.poly-card__content')
-        #old_prices = products.css('s.andes-money-amount--previous *::text').getall()
-        #current_prices = products.css('div.poly-price__current .andes-money-amount--cents-superscript *::text').getall() #(elementoprincipal.claseelementoprincipal .clase unica do elemento (aquela que contem --))
+        
         
         for product in products:
             old_prices = product.css('s.andes-money-amount--previous *::text').getall()
@@ -24,6 +25,15 @@ class MercadolivreSpider(scrapy.Spider):
                     'review' : reviews[0] if len(reviews) >=1 and len(reviews[0])==3  else 0 
                 
                 }
+        
+    
+        if self.page_count < self.max_page:
+            self.page_count += 1
+            offset = (self.page_count - 1) * 48 + 1
+            next_page = f"https://lista.mercadolivre.com.br/tenis-corrida-masculino_Desde_{offset}_NoIndex_True"
+            yield scrapy.Request(url=next_page, callback=self.parse)    
             
             
+
+
 
