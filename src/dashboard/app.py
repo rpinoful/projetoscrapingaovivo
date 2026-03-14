@@ -5,25 +5,9 @@ import sqlite3
 #conetar ao banco de dados sql lite -(ABRINDO CONEXÃO)
 conn = sqlite3.connect('../../data/quotes.db')
 
-cursor = conn.cursor
-cursor.execute("""
-    UPDATE mercadolivre_items 
-    SET current_price = 243.33 
-    WHERE rowid = 432      
-""")
-
-# Salvar a alteração
-conn.commit()
-
-# Verificar se corrigiu
-cursor.execute("SELECT rowid, current_price FROM mercadolivre_items WHERE rowid = 432")
-print(cursor.fetchone())
 
 #carregar os dados da tabela 'mercadolivreitems' em um dataframe pandas 
 df = pd.read_sql_query("SELECT * FROM mercadolivre_items",conn)
-
-display(df)
-
 
 
 #fechar conexão 
